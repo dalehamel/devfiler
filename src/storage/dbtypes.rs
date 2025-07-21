@@ -17,6 +17,7 @@
 
 //! Types stored in database tables that aren't specific to a particular table.
 
+#[cfg(feature = "ui")]
 use crate::storage::TableKey;
 
 /// 64-bit UTC unix timestamp.
@@ -72,6 +73,7 @@ where
     }
 }
 
+#[cfg(feature = "ui")]
 impl TableKey for FileId {
     type B = [u8; 16];
 

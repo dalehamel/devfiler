@@ -19,8 +19,10 @@
 //! storage solution.
 
 use std::sync::Arc;
+#[cfg(feature = "ui")]
 use tracing::warn;
 
+#[cfg(feature = "ui")]
 /// DB schema version.
 ///
 /// Bump this on any breaking schema change. Both the serialization scheme for
@@ -28,11 +30,13 @@ use tracing::warn;
 /// change other than adding or deleting tables is a breaking one.
 const DB_VERSION: u32 = 4;
 
+#[cfg(feature = "ui")]
 lazy_static::lazy_static! {
     /// Global database instance.
     pub static ref DB: Arc<Db> = Db::open().unwrap();
 }
 
+#[cfg(feature = "ui")]
 pub struct Db {
     // RocksDB tables.
     pub trace_events: TraceEvents,
@@ -45,6 +49,7 @@ pub struct Db {
     pub symbols: SymDb,
 }
 
+#[cfg(feature = "ui")]
 impl Db {
     /// Number of tables.
     pub const NUM_TABLES: usize = 5;
@@ -107,14 +112,18 @@ impl Db {
     }
 }
 
+#[cfg(feature = "ui")]
 #[macro_use]
 mod table;
+#[cfg(feature = "ui")]
 pub use table::*;
 
 pub mod dbtypes;
 pub use dbtypes::*;
 
+#[cfg(feature = "ui")]
 mod tables;
+#[cfg(feature = "ui")]
 pub use tables::*;
 
 mod metricspec;
@@ -123,7 +132,9 @@ pub use metricspec::*;
 mod errorspec;
 pub use errorspec::*;
 
+#[cfg(feature = "ui")]
 mod notify;
+#[cfg(feature = "ui")]
 pub use notify::*;
 
 pub mod rkyvtree; // intentionally no wildcard import

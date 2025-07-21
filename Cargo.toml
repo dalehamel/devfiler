@@ -4,6 +4,15 @@ version = "0.14.0"
 edition = "2021"
 license = "Apache-2.0"
 
+[lib]
+name = "devfiler"
+path = "src/lib.rs"
+
+[[bin]]
+name = "devfiler"
+path = "src/main.rs"
+features = ["ui"]
+
 [profile.dev]
 opt-level = 1
 
@@ -19,12 +28,20 @@ codegen-units = 1
 strip = true
 
 [features]
-default = ["render-opengl", "automagic-symbols", "allow-dev-mode"]
+# Default includes full application
+default = ["ui", "render-opengl", "automagic-symbols", "allow-dev-mode"]
+
+# Full application with UI and database
+ui = ["egui", "egui_plot", "egui_extras", "egui_commonmark", "egui-phosphor", "eframe", "rocksdb"]
 
 # Enable the OpenGL renderer backend.
 render-opengl = ["eframe/glow"]
 # Enable the WebGPU (Metal, Vulkan) renderer backend.
 render-wgpu = ["eframe/wgpu"]
+
+# Storage-only feature for library usage (excludes UI and database dependencies)
+storage-only = []
+
 # Enable automagic symbolization from global indexing infra.
 automagic-symbols = []
 # Allow entering UP developer mode by double-clicking the logo.
@@ -38,11 +55,11 @@ anyhow = "1.0.71"
 smallvec = "1.11.1"
 arc-swap = "1.6.0"
 base64 = "0.22.0"
-egui = "0.29.1"
-egui_plot = "0.29.0"
-egui_extras = { version = "0.29.1", features = ["image"] }
-egui_commonmark = "0.18.0"
-egui-phosphor = "0.7.3"
+egui = { version = "0.29.1", optional = true }
+egui_plot = { version = "0.29.0", optional = true }
+egui_extras = { version = "0.29.1", features = ["image"], optional = true }
+egui_commonmark = { version = "0.18.0", optional = true }
+egui-phosphor = { version = "0.7.3", optional = true }
 fallible-iterator = "0.3.0"
 chrono = "0.4.31"
 indexmap = "2.1.0"
@@ -72,11 +89,13 @@ idna = "1.0.3"
 version = "0.22.0"
 default-features = false
 features = ["zstd", "jemalloc"]
+optional = true
 
 [dependencies.eframe]
 version = "0.29.1"
 default-features = false
 features = ["default_fonts", "x11"]
+optional = true
 
 [build-dependencies]
 tonic-build = "0.11.0"

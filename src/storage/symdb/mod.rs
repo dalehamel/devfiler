@@ -15,12 +15,15 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#[cfg(feature = "ui")]
 use crate::storage::rkyvtree::ArchivedElement;
 use crate::storage::*;
 use anyhow::{Context, Result};
 use memmap2::Mmap;
+#[cfg(feature = "ui")]
 use smallvec::{smallvec, SmallVec};
 use std::collections::HashMap;
+#[cfg(feature = "ui")]
 use std::fmt;
 use std::fs::File;
 use std::io::{BufWriter, ErrorKind, Write};
@@ -190,6 +193,7 @@ pub struct SymTree {
     pub tree: rkyvtree::Tree<u64, SymRange>,
 }
 
+#[cfg(feature = "ui")]
 impl ArchivedSymTree {
     fn str_by_ref(&self, idx: StringRef) -> Option<&str> {
         self.strings.get(idx.0 as usize).map(|x| x.as_str())
@@ -242,6 +246,7 @@ pub struct LineTableEntry {
     pub line_number: u32,
 }
 
+#[cfg(feature = "ui")]
 /// Symbolize a frame (and it's inline children, if they exist).
 pub fn symbolize_frame(frame: Frame, inline_frames: bool) -> SmallVec<[SymbolizedFrame; 2]> {
     if frame.kind == FrameKind::Regular(InterpKind::Native) {
@@ -251,6 +256,7 @@ pub fn symbolize_frame(frame: Frame, inline_frames: bool) -> SmallVec<[Symbolize
     }
 }
 
+#[cfg(feature = "ui")]
 fn symbolize_iterp_frame(raw: Frame) -> SymbolizedFrame {
     let Some(frame) = DB.stack_frames.get(raw.id.into()) else {
         return SymbolizedFrame::unsymbolized(raw.into());
@@ -269,6 +275,7 @@ fn symbolize_iterp_frame(raw: Frame) -> SymbolizedFrame {
     }
 }
 
+#[cfg(feature = "ui")]
 fn symbolize_native_frame(raw: Frame, inline_frames: bool) -> SmallVec<[SymbolizedFrame; 2]> {
     // No symbols for executable at all? Fast path.
     let Some(tree) = DB.symbols.get(raw.id.file_id.into()).unwrap() else {
@@ -314,6 +321,7 @@ fn symbolize_native_frame(raw: Frame, inline_frames: bool) -> SmallVec<[Symboliz
     out
 }
 
+#[cfg(feature = "ui")]
 /// Frame with corresponding symbol information.
 #[derive(Debug)]
 pub struct SymbolizedFrame {
@@ -330,6 +338,7 @@ pub struct SymbolizedFrame {
     pub line_no: Option<u32>,
 }
 
+#[cfg(feature = "ui")]
 impl SymbolizedFrame {
     /// Create a fully unsymbolized frame.
     fn unsymbolized(raw: Frame) -> Self {
@@ -342,6 +351,7 @@ impl SymbolizedFrame {
     }
 }
 
+#[cfg(feature = "ui")]
 impl fmt::Display for SymbolizedFrame {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // For native frames, print executable name. We can't do this for
